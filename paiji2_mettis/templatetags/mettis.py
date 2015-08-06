@@ -14,10 +14,11 @@ def next_stops_display():
     m = MettisFetcher()
     stops = []
 
-
     for stop_setting in settings.METTIS_STOPS:
         next_stops = m.next_bus_stops(
-                stop_setting['line'], stop_setting['direction'], stop_setting['from_stop'],
+                stop_setting['line'],
+                stop_setting['direction'],
+                stop_setting['from_stop'],
                 stops_number=3,
             )
         error = None
@@ -32,5 +33,9 @@ def next_stops_display():
         })
     return {
         'stops': stops,
-        'url': m.make_url(stop_setting['url_1'], stop_setting['url_2'], stop_setting['url_3']),
+        'url': m.make_url(
+            stop_setting['url_1'],
+            stop_setting['url_2'],
+            stop_setting['url_3'],
+        ),
     }

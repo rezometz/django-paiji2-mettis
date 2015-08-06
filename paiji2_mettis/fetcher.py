@@ -97,8 +97,16 @@ class MettisFetcher(object):
 
         schedule = timetable[0]
         for time in timetable[1:]:
-            if ((from_time.hour >= schedule['hour'] and from_time.minute >= schedule['minutes']) or from_time.hour > schedule['hour']) \
-                and ((from_time.hour <= time['hour'] and from_time.minute < time['minutes']) or from_time.hour < time['hour']):
+
+            gt_schedule = from_time.hour >= schedule['hour']
+            gt_schedule &= from_time.minute >= schedule['minutes']
+            gt_schedule = gt_schedule or from_time.hour > schedule['hour']
+
+            lt_time = from_time.hour <= time['hour']
+            lt_time &= from_time.minute < time['minutes']
+            lt_time = lt_time or from_time.hour < time['hour']
+
+            if gt_schedule and lt_time:
                 schedule = time
                 break
             schedule = time
@@ -106,7 +114,10 @@ class MettisFetcher(object):
         if schedule is None:
             schedule = timetable[0]
 
-        return from_time.replace(hour=schedule['hour'], minute=schedule['minutes'])
+        return from_time.replace(
+            hour=schedule['hour'],
+            minute=schedule['minutes'],
+        )
 
     def next_bus_stops(self, ligne, head, arret, stops_number=1):
         key = 'mettis_{ligne}_{head}_{arret}'.format(
